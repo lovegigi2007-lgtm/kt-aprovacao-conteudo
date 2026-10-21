@@ -480,7 +480,7 @@ export default async function ConteudoPage({
                       <button
                         type="submit"
                         aria-label="Apagar comentário"
-                        className="text-[11px] text-texto/40 hover:text-[var(--status-reprovado)]"
+                        className="relative z-10 cursor-pointer text-[11px] font-medium text-texto/50 hover:text-[var(--status-reprovado)] px-2 py-1 -m-1 min-h-[28px]"
                       >
                         apagar
                       </button>
