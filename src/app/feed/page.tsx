@@ -82,9 +82,9 @@ export default async function FeedPage({
       <p className="font-title font-800 text-sm text-texto mb-1">
         {project.nome}
       </p>
-      <p className="text-xs text-texto/70 mb-4">
-        Consultoria técnica agronômica · laudos para o produtor rural
-      </p>
+      {project.bio && (
+        <p className="text-xs text-texto/70 mb-4">{project.bio}</p>
+      )}
 
       {/* Grade 3:4 */}
       <div className="grid grid-cols-3 gap-0.5">

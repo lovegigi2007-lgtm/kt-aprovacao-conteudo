@@ -4,7 +4,7 @@ import { getUsuarioEProjetoAtual } from "@/lib/data/current-project";
 import { getMiniaturasPorConteudo } from "@/lib/data/thumbnails";
 import { ContentCard } from "@/components/content-card";
 import { BatchUploader } from "@/components/batch-uploader";
-import { aprovarTodosPendentesDaLeva } from "@/app/actions/batches";
+import { aprovarTodosPendentesDaLeva, criarSubpasta } from "@/app/actions/batches";
 import {
   statusParaLabel,
   redeParaLabel,
@@ -51,6 +51,15 @@ export default async function CriativosPage({
         .select("*")
         .in("batch_id", idsLevas)
         .order("criado_em", { ascending: true })
+    : { data: [] as never[] };
+
+  const { data: subpastas } = idsLevas.length
+    ? await supabase
+        .from("batch_folders")
+        .select("*")
+        .in("batch_id", idsLevas)
+        .is("pasta_mae_id", null)
+        .order("ordem", { ascending: true })
     : { data: [] as never[] };
 
   const miniaturaPorConteudo = await getMiniaturasPorConteudo(
@@ -114,7 +123,7 @@ export default async function CriativosPage({
             (c) => c.status === "aprovado" || c.status === "publicado"
           ).length;
 
-          const conteudosConvertidos: Conteudo[] = itensDaLeva.map((linha) => ({
+          const converter = (linha: (typeof itensDaLeva)[number]): Conteudo => ({
             id: linha.id,
             titulo: linha.titulo,
             dataHora: linha.data_hora,
@@ -126,7 +135,12 @@ export default async function CriativosPage({
             responsavel: "",
             corCapa: "#39812C",
             miniaturaUrl: miniaturaPorConteudo.get(linha.id) ?? null,
-          }));
+          });
+
+          const subpastasDaLeva = (subpastas ?? []).filter(
+            (p) => p.batch_id === leva.id
+          );
+          const semSubpasta = itensDaLeva.filter((c) => !c.batch_folder_id);
 
           return (
             <div key={leva.id} className="flex flex-col gap-2 min-w-0">
@@ -153,15 +167,64 @@ export default async function CriativosPage({
               )}
 
               <div className="flex flex-col gap-2">
-                {conteudosConvertidos.map((c) => (
+                {semSubpasta.map((c) => (
                   <Link key={c.id} href={`/conteudo/${c.id}`}>
-                    <ContentCard conteudo={c} />
+                    <ContentCard conteudo={converter(c)} />
                   </Link>
                 ))}
               </div>
 
               {podeEditar && (
                 <BatchUploader projectId={project.id} batchId={leva.id} />
+              )}
+
+              {subpastasDaLeva.map((pasta) => {
+                const itensDaPasta = itensDaLeva.filter(
+                  (c) => c.batch_folder_id === pasta.id
+                );
+                return (
+                  <div
+                    key={pasta.id}
+                    className="rounded-lg border border-black/10 p-2 mt-1 flex flex-col gap-2"
+                  >
+                    <p className="text-xs font-semibold text-texto/70">
+                      📁 {pasta.nome}
+                    </p>
+                    {itensDaPasta.map((c) => (
+                      <Link key={c.id} href={`/conteudo/${c.id}`}>
+                        <ContentCard conteudo={converter(c)} />
+                      </Link>
+                    ))}
+                    {podeEditar && (
+                      <BatchUploader
+                        projectId={project.id}
+                        batchId={leva.id}
+                        batchFolderId={pasta.id}
+                        texto={`+ Adicionar em "${pasta.nome}"`}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+
+              {podeEditar && (
+                <details className="mt-1">
+                  <summary className="cursor-pointer text-xs font-semibold text-apoio">
+                    + Nova subpasta
+                  </summary>
+                  <form action={criarSubpasta} className="flex gap-2 mt-2">
+                    <input type="hidden" name="batchId" value={leva.id} />
+                    <input
+                      name="nome"
+                      required
+                      placeholder="Ex.: Vídeos"
+                      className="campo-input flex-1 text-xs"
+                    />
+                    <button className="text-xs font-semibold rounded-full bg-principal/10 text-principal px-3">
+                      Criar
+                    </button>
+                  </form>
+                </details>
               )}
             </div>
           );

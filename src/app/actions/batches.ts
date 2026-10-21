@@ -31,6 +31,21 @@ export async function criarLeva(formData: FormData) {
   redirect(`/criativos?mes=${mesReferencia}`);
 }
 
+export async function criarSubpasta(formData: FormData) {
+  const batchId = String(formData.get("batchId"));
+  const nome = String(formData.get("nome") ?? "").trim();
+  const { papel } = await getUsuarioEProjetoAtual();
+  if (papel !== "administrador" && papel !== "editor") {
+    throw new Error("Você não tem permissão para criar subpastas.");
+  }
+  if (!nome) throw new Error("Dê um nome para a subpasta.");
+
+  const supabase = await createClient();
+  await supabase.from("batch_folders").insert({ batch_id: batchId, nome });
+
+  revalidatePath("/criativos");
+}
+
 export async function aprovarTodosPendentesDaLeva(formData: FormData) {
   const batchId = String(formData.get("batchId"));
   const { user, papel } = await getUsuarioEProjetoAtual();

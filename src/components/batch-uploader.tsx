@@ -8,9 +8,16 @@ import { gerarUrlDeUpload } from "@/app/actions/storage";
 interface BatchUploaderProps {
   projectId: string;
   batchId: string;
+  batchFolderId?: string | null;
+  texto?: string;
 }
 
-export function BatchUploader({ projectId, batchId }: BatchUploaderProps) {
+export function BatchUploader({
+  projectId,
+  batchId,
+  batchFolderId,
+  texto,
+}: BatchUploaderProps) {
   const [enviando, setEnviando] = useState(false);
   const [progresso, setProgresso] = useState("");
   const [erro, setErro] = useState<string | null>(null);
@@ -42,6 +49,7 @@ export function BatchUploader({ projectId, batchId }: BatchUploaderProps) {
             tipo: "criativo",
             status: "rascunho",
             batch_id: batchId,
+            batch_folder_id: batchFolderId ?? null,
           })
           .select("id")
           .single();
@@ -98,14 +106,14 @@ export function BatchUploader({ projectId, batchId }: BatchUploaderProps) {
         multiple
         accept="image/jpeg,image/png,image/webp,image/heic,video/mp4,video/quicktime"
         className="hidden"
-        id={`batch-input-${batchId}`}
+        id={`batch-input-${batchId}-${batchFolderId ?? "raiz"}`}
         onChange={(e) => e.target.files && enviarArquivos(e.target.files)}
       />
       <label
-        htmlFor={`batch-input-${batchId}`}
+        htmlFor={`batch-input-${batchId}-${batchFolderId ?? "raiz"}`}
         className="cursor-pointer block text-center rounded-lg border-2 border-dashed border-apoio/30 bg-apoio/5 text-apoio text-xs font-semibold py-3 hover:bg-apoio/10"
       >
-        {enviando ? progresso || "Enviando..." : "+ Adicionar criativos (vários arquivos)"}
+        {enviando ? progresso || "Enviando..." : texto ?? "+ Adicionar criativos (vários arquivos)"}
       </label>
       {erro && (
         <p className="text-[11px] text-[var(--status-reprovado)] mt-1">{erro}</p>

@@ -13,7 +13,7 @@ export async function getUsuarioEProjetoAtual() {
   const { data: membro } = await supabase
     .from("project_members")
     .select(
-      "papel, projects(id, nome, slug, tema, redes_ativas, regra_aprovacao, metas_frequencia)"
+      "papel, projects(id, nome, slug, bio, tema, redes_ativas, regra_aprovacao, metas_frequencia)"
     )
     .eq("user_id", user.id)
     .limit(1)
@@ -33,6 +33,7 @@ export async function getUsuarioEProjetoAtual() {
       id: string;
       nome: string;
       slug: string;
+      bio: string | null;
       tema: Record<string, string>;
       redes_ativas: string[];
       regra_aprovacao: string;
