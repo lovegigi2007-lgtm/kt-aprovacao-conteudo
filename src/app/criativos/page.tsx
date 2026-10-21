@@ -5,6 +5,8 @@ import { getMiniaturasPorConteudo } from "@/lib/data/thumbnails";
 import { ContentCard } from "@/components/content-card";
 import { BatchUploader } from "@/components/batch-uploader";
 import { aprovarTodosPendentesDaLeva, criarSubpasta } from "@/app/actions/batches";
+import { DeleteBatchButton } from "@/components/delete-batch-button";
+import { DeleteContentButton } from "@/components/delete-content-button";
 import {
   statusParaLabel,
   redeParaLabel,
@@ -69,6 +71,7 @@ export default async function CriativosPage({
 
   const podeEditar = papel === "administrador" || papel === "editor";
   const podeAprovar = papel === "administrador" || papel === "aprovador";
+  const podeApagar = papel === "administrador";
 
   const mesAnterior = mes === 0 ? `${ano - 1}-12` : `${ano}-${String(mes).padStart(2, "0")}`;
   const mesSeguinte =
@@ -142,7 +145,12 @@ export default async function CriativosPage({
           return (
             <div key={leva.id} className="flex flex-col gap-2 min-w-0">
               <div className="rounded-xl bg-principal text-branco px-3 py-2.5">
-                <p className="font-title font-800 text-sm">{leva.nome}</p>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-title font-800 text-sm">{leva.nome}</p>
+                  {podeApagar && (
+                    <DeleteBatchButton batchId={leva.id} nome={leva.nome} />
+                  )}
+                </div>
                 <p className="text-[11px] text-branco/80">
                   {leva.data_aprovacao
                     ? `✓ Aprovada em ${new Date(
@@ -174,9 +182,20 @@ export default async function CriativosPage({
 
               <div className="flex flex-col gap-2">
                 {semSubpasta.map((c) => (
-                  <Link key={c.id} href={`/conteudo/${c.id}`}>
-                    <ContentCard conteudo={converter(c)} />
-                  </Link>
+                  <div key={c.id} className="relative">
+                    <Link href={`/conteudo/${c.id}`}>
+                      <ContentCard conteudo={converter(c)} />
+                    </Link>
+                    {podeApagar && (
+                      <div className="absolute top-1.5 right-1.5 z-10">
+                        <DeleteContentButton
+                          contentId={c.id}
+                          titulo={c.titulo}
+                          tamanho="pequeno"
+                        />
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
 
@@ -197,9 +216,20 @@ export default async function CriativosPage({
                       📁 {pasta.nome}
                     </p>
                     {itensDaPasta.map((c) => (
-                      <Link key={c.id} href={`/conteudo/${c.id}`}>
-                        <ContentCard conteudo={converter(c)} />
-                      </Link>
+                      <div key={c.id} className="relative">
+                        <Link href={`/conteudo/${c.id}`}>
+                          <ContentCard conteudo={converter(c)} />
+                        </Link>
+                        {podeApagar && (
+                          <div className="absolute top-1.5 right-1.5 z-10">
+                            <DeleteContentButton
+                              contentId={c.id}
+                              titulo={c.titulo}
+                              tamanho="pequeno"
+                            />
+                          </div>
+                        )}
+                      </div>
                     ))}
                     {podeEditar && (
                       <BatchUploader

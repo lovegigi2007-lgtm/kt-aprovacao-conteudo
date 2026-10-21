@@ -19,6 +19,7 @@ import { marcarComoPublicado } from "@/app/actions/contents";
 import { AssetUploader } from "@/components/asset-uploader";
 import { excluirAsset } from "@/app/actions/assets";
 import { ReplaceAssetButton } from "@/components/replace-asset-button";
+import { DeleteContentButton } from "@/components/delete-content-button";
 import { Checklist } from "@/components/checklist";
 import { EnviarAprovacaoButton } from "@/components/enviar-aprovacao-button";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
@@ -163,6 +164,7 @@ export default async function ConteudoPage({
   }
 
   const podeEditar = papel === "administrador" || papel === "editor";
+  const podeApagar = papel === "administrador";
   const podeAprovar = papel === "administrador" || papel === "aprovador";
 
   const ultimaReprovacao = (aprovacoes ?? []).find((a) => a.decisao === "reprovado");
@@ -186,6 +188,15 @@ export default async function ConteudoPage({
             >
               editar
             </Link>
+          )}
+          {podeApagar && (
+            <DeleteContentButton
+              contentId={conteudo.id}
+              titulo={conteudo.titulo}
+              redirecionarPara={
+                conteudo.tipo === "criativo" ? "/criativos" : "/"
+              }
+            />
           )}
         </div>
       </div>

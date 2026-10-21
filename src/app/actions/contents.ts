@@ -3,8 +3,49 @@
 import { createClient } from "@/lib/supabase/server";
 import { getUsuarioEProjetoAtual } from "@/lib/data/current-project";
 import { labelParaRede, labelParaFormato, labelParaTipo } from "@/lib/labels";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { r2, R2_BUCKET } from "@/lib/r2";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+
+export async function apagarArquivosDoConteudo(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  contentId: string
+) {
+  const { data: assets } = await supabase
+    .from("assets")
+    .select("caminho_storage")
+    .eq("content_id", contentId);
+
+  for (const a of assets ?? []) {
+    try {
+      await r2.send(
+        new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: a.caminho_storage })
+      );
+    } catch {
+      // se já não existir no armazenamento, ignora e segue
+    }
+  }
+}
+
+export async function excluirConteudo(contentId: string) {
+  const { papel } = await getUsuarioEProjetoAtual();
+  if (papel !== "administrador") {
+    throw new Error("Só o administrador pode apagar conteúdos.");
+  }
+  const supabase = await createClient();
+
+  await apagarArquivosDoConteudo(supabase, contentId);
+  await supabase.from("contents").delete().eq("id", contentId);
+
+  revalidatePath("/");
+  revalidatePath("/mensal");
+  revalidatePath("/criativos");
+  revalidatePath("/feed");
+  revalidatePath("/aprovacao");
+  revalidatePath("/ideias");
+}
 
 export async function criarConteudo(formData: FormData) {
   const { user, project } = await getUsuarioEProjetoAtual();

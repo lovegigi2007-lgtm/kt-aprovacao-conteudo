@@ -3,8 +3,36 @@
 import { createClient } from "@/lib/supabase/server";
 import { getUsuarioEProjetoAtual } from "@/lib/data/current-project";
 import { criarPastaDeLeva } from "@/lib/google-drive";
+import { apagarArquivosDoConteudo } from "@/app/actions/contents";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+
+export async function excluirLeva(formData: FormData) {
+  const batchId = String(formData.get("batchId"));
+  const { papel } = await getUsuarioEProjetoAtual();
+  if (papel !== "administrador") {
+    throw new Error("Só o administrador pode apagar levas.");
+  }
+  const supabase = await createClient();
+
+  const { data: itens } = await supabase
+    .from("contents")
+    .select("id")
+    .eq("batch_id", batchId);
+
+  for (const item of itens ?? []) {
+    await apagarArquivosDoConteudo(supabase, item.id);
+  }
+
+  const ids = (itens ?? []).map((i) => i.id);
+  if (ids.length > 0) {
+    await supabase.from("contents").delete().in("id", ids);
+  }
+
+  await supabase.from("batches").delete().eq("id", batchId);
+
+  revalidatePath("/criativos");
+}
 
 export async function criarLeva(formData: FormData) {
   const { project, papel } = await getUsuarioEProjetoAtual();
