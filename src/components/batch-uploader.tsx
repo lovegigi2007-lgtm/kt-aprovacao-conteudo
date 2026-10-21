@@ -9,6 +9,7 @@ interface BatchUploaderProps {
   projectId: string;
   batchId: string;
   batchFolderId?: string | null;
+  batchDriveFolderUrl?: string | null;
   texto?: string;
 }
 
@@ -16,6 +17,7 @@ export function BatchUploader({
   projectId,
   batchId,
   batchFolderId,
+  batchDriveFolderUrl,
   texto,
 }: BatchUploaderProps) {
   const [enviando, setEnviando] = useState(false);
@@ -50,6 +52,7 @@ export function BatchUploader({
             status: "rascunho",
             batch_id: batchId,
             batch_folder_id: batchFolderId ?? null,
+            drive_folder_url: batchDriveFolderUrl ?? null,
           })
           .select("id")
           .single();

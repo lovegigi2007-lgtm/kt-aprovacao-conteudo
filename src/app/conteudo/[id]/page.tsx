@@ -368,6 +368,20 @@ export default async function ConteudoPage({
             </a>
           </div>
         )}
+        {conteudo.drive_folder_url && (
+          <div>
+            <p className="text-xs font-semibold text-texto/50 mb-0.5">
+              Pasta no Drive
+            </p>
+            <a
+              href={conteudo.drive_folder_url}
+              target="_blank"
+              className="text-sm text-apoio underline break-all"
+            >
+              📁 Abrir pasta no Drive
+            </a>
+          </div>
+        )}
       </div>
 
       {(itensChecklist ?? []).length > 0 && (

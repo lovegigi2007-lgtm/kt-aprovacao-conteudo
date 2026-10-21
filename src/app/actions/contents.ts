@@ -5,6 +5,7 @@ import { getUsuarioEProjetoAtual } from "@/lib/data/current-project";
 import { labelParaRede, labelParaFormato, labelParaTipo } from "@/lib/labels";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { r2, R2_BUCKET } from "@/lib/r2";
+import { criarPastaDeConteudo } from "@/lib/google-drive";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
@@ -67,6 +68,28 @@ export async function criarConteudo(formData: FormData) {
     throw new Error("Título e data são obrigatórios.");
   }
 
+  const formato = labelParaFormato[formatoLabel] ?? "estatico";
+  const tipo = labelParaTipo[tipoLabel] ?? "conteudo";
+
+  // Se veio de uma ideia que já tem pasta no Drive, reaproveita a mesma
+  // pasta. Senão (conteúdo criado direto), cria uma pasta nova agora.
+  let driveFolderUrl: string | null = null;
+  if (ideaId) {
+    const { data: ideia } = await supabase
+      .from("ideas")
+      .select("drive_folder_url")
+      .eq("id", ideaId)
+      .maybeSingle();
+    driveFolderUrl = ideia?.drive_folder_url ?? null;
+  }
+  if (!driveFolderUrl && tipo === "conteudo") {
+    try {
+      driveFolderUrl = await criarPastaDeConteudo(project.id, formato, titulo);
+    } catch (e) {
+      console.error("Erro ao criar pasta no Drive para o conteúdo:", e);
+    }
+  }
+
   const { data: novo, error } = await supabase
     .from("contents")
     .insert({
@@ -74,8 +97,8 @@ export async function criarConteudo(formData: FormData) {
       titulo,
       data_hora: new Date(`${data}T${hora}:00`).toISOString(),
       rede: labelParaRede[redeLabel] ?? "instagram",
-      formato: labelParaFormato[formatoLabel] ?? "estatico",
-      tipo: labelParaTipo[tipoLabel] ?? "conteudo",
+      formato,
+      tipo,
       objetivo,
       legenda,
       cta,
@@ -83,6 +106,7 @@ export async function criarConteudo(formData: FormData) {
       responsavel_id: user.id,
       status: "rascunho",
       idea_id: ideaId,
+      drive_folder_url: driveFolderUrl,
     })
     .select("id")
     .single();
@@ -111,7 +135,7 @@ export async function criarConteudo(formData: FormData) {
 
 export async function editarConteudo(formData: FormData) {
   const contentId = String(formData.get("contentId"));
-  const { user, papel } = await getUsuarioEProjetoAtual();
+  const { user, papel, project } = await getUsuarioEProjetoAtual();
   if (papel !== "administrador" && papel !== "editor") {
     throw new Error("Você não tem permissão para editar este conteúdo.");
   }
@@ -157,6 +181,17 @@ export async function editarConteudo(formData: FormData) {
   const derrubaAprovacao = atual.status === "aprovado" && !apenasDataMudou;
   const novoStatus = derrubaAprovacao ? "em_aprovacao" : atual.status;
 
+  // Conteúdos antigos (criados antes da pasta ser automática) ainda não
+  // têm drive_folder_url — aproveita a edição pra criar a pasta agora.
+  let driveFolderUrl = atual.drive_folder_url as string | null;
+  if (!driveFolderUrl && novoTipo === "conteudo") {
+    try {
+      driveFolderUrl = await criarPastaDeConteudo(project.id, novoFormato, titulo);
+    } catch (e) {
+      console.error("Erro ao criar pasta no Drive para o conteúdo:", e);
+    }
+  }
+
   const { error } = await supabase
     .from("contents")
     .update({
@@ -170,6 +205,7 @@ export async function editarConteudo(formData: FormData) {
       cta,
       copy_link: copyLink,
       status: novoStatus,
+      drive_folder_url: driveFolderUrl,
       atualizado_em: new Date().toISOString(),
     })
     .eq("id", contentId);

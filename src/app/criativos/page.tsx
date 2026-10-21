@@ -200,7 +200,11 @@ export default async function CriativosPage({
               </div>
 
               {podeEditar && (
-                <BatchUploader projectId={project.id} batchId={leva.id} />
+                <BatchUploader
+                  projectId={project.id}
+                  batchId={leva.id}
+                  batchDriveFolderUrl={leva.drive_folder_url}
+                />
               )}
 
               {subpastasDaLeva.map((pasta) => {
@@ -236,6 +240,7 @@ export default async function CriativosPage({
                         projectId={project.id}
                         batchId={leva.id}
                         batchFolderId={pasta.id}
+                        batchDriveFolderUrl={leva.drive_folder_url}
                         texto={`+ Adicionar em "${pasta.nome}"`}
                       />
                     )}
