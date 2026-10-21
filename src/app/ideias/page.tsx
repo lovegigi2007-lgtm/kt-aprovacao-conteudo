@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getUsuarioEProjetoAtual } from "@/lib/data/current-project";
 import { excluirIdeia } from "@/app/actions/ideas";
+import { formatoParaLabel, tipoParaLabel } from "@/lib/labels";
 
 export default async function IdeiasPage() {
   const { papel, project } = await getUsuarioEProjetoAtual();
@@ -60,9 +61,31 @@ export default async function IdeiasPage() {
             key={ideia.id}
             className="rounded-xl border border-black/5 bg-branco shadow-sm p-4 flex flex-col gap-2"
           >
-            <p className="font-title font-800 text-sm text-texto">
-              {ideia.titulo}
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-title font-800 text-sm text-texto">
+                {ideia.titulo}
+              </p>
+              <div className="flex gap-1 flex-shrink-0">
+                <span className="text-[10px] font-medium rounded-full bg-apoio/10 text-apoio px-2 py-0.5">
+                  {tipoParaLabel[ideia.tipo] ?? ideia.tipo}
+                </span>
+                {ideia.formato && (
+                  <span className="text-[10px] font-medium rounded-full bg-apoio/10 text-apoio px-2 py-0.5">
+                    {formatoParaLabel[ideia.formato] ?? ideia.formato}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {ideia.drive_folder_url && (
+              <a
+                href={ideia.drive_folder_url}
+                target="_blank"
+                className="text-xs text-apoio underline break-all"
+              >
+                📁 pasta no Drive
+              </a>
+            )}
 
             {ideia.link && (
               <a

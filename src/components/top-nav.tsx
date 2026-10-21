@@ -58,6 +58,9 @@ export function TopNav({
             </span>
           )}
         </Link>
+        <Link href="/configuracoes" aria-label="Configurações" className="text-xl">
+          ⚙️
+        </Link>
         <div className="h-8 w-8 rounded-full bg-branco/20" />
       </div>
     </header>

@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getUsuarioEProjetoAtual } from "@/lib/data/current-project";
+import { criarPastaDeLeva } from "@/lib/google-drive";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
@@ -19,10 +20,18 @@ export async function criarLeva(formData: FormData) {
     throw new Error("Nome e mês de referência são obrigatórios.");
   }
 
+  let driveFolderUrl: string | null = null;
+  try {
+    driveFolderUrl = await criarPastaDeLeva(project.id, nome);
+  } catch {
+    // segue sem travar a criação da leva se o Drive não estiver conectado
+  }
+
   const { error } = await supabase.from("batches").insert({
     project_id: project.id,
     nome,
     mes_referencia: `${mesReferencia}-01`,
+    drive_folder_url: driveFolderUrl,
   });
 
   if (error) throw new Error("Não foi possível criar a leva: " + error.message);

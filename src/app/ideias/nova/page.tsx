@@ -21,6 +21,27 @@ export default function NovaIdeiaPage() {
           />
         </Campo>
 
+        <div className="grid grid-cols-2 gap-3">
+          <Campo label="Tipo">
+            <select name="tipo" className="campo-input">
+              <option>Conteúdo</option>
+              <option>Criativo</option>
+            </select>
+          </Campo>
+          <Campo label="Formato">
+            <select name="formato" className="campo-input">
+              <option>Estático</option>
+              <option>Reels</option>
+              <option>Carrossel</option>
+              <option>Story</option>
+            </select>
+          </Campo>
+        </div>
+        <p className="text-[11px] text-texto/50 -mt-2">
+          Usamos isso pra já criar a pasta certa no Drive (Conteúdos/formato,
+          ou Criativos, se for pra uma leva).
+        </p>
+
         <Campo label="Link de referência (opcional)">
           <input
             name="link"

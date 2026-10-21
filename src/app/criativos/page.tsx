@@ -155,6 +155,15 @@ export default async function CriativosPage({
                     ? "Sem criativos ainda"
                     : `Em aprovação · ${aprovados} de ${itensDaLeva.length} aprovados`}
                 </p>
+                {leva.drive_folder_url && (
+                  <a
+                    href={leva.drive_folder_url}
+                    target="_blank"
+                    className="text-[11px] text-destaque underline"
+                  >
+                    📁 pasta no Drive
+                  </a>
+                )}
               </div>
 
               {podeAprovar && pendentes > 1 && (
