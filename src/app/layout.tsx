@@ -3,6 +3,7 @@ import { Archivo, Lato } from "next/font/google";
 import "./globals.css";
 import { TopNav } from "@/components/top-nav";
 import { BottomNav } from "@/components/bottom-nav";
+import { BackgroundDecor } from "@/components/background-decor";
 import { getFilaAprovacaoCount } from "@/lib/data/fila-aprovacao";
 import { getNotificacoesNaoLidasCount } from "@/lib/data/notifications";
 
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${archivo.variable} ${lato.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-fundo text-texto">
+        <BackgroundDecor />
         <TopNav
           aguardandoAprovacao={aguardandoAprovacao}
           notificacoesNaoLidas={notificacoesNaoLidas}
