@@ -9,10 +9,10 @@
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "/icons/icon.svg",
+      "src": "/logo-simbolo.png",
       "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

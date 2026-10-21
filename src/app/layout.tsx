@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   description: "Calendário e aprovação de conteúdo da Kruger Toledo Consultoria",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icons/icon.svg",
-    apple: "/icons/icon.svg",
+    icon: "/logo-simbolo.png",
+    apple: "/logo-simbolo.png",
   },
 };
 

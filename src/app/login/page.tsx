@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -31,9 +32,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-fundo px-4">
       <div className="w-full max-w-sm bg-cartao rounded-2xl shadow-sm border border-black/5 p-6">
-        <div className="h-12 w-12 rounded-full bg-principal flex items-center justify-center font-title font-900 text-branco mb-4">
-          KT
-        </div>
+        <Image
+          src="/logo-simbolo.png"
+          alt="Kruger Toledo Consultoria"
+          width={48}
+          height={48}
+          className="h-12 w-12 rounded-full mb-4"
+          priority
+        />
         <h1 className="font-title font-900 text-xl text-principal mb-1">
           Entrar
         </h1>

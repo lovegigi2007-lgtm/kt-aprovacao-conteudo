@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   IconSemanal,
   IconMensal,
@@ -27,9 +28,14 @@ export function TopNav({
   return (
     <header className="hidden md:flex items-center justify-between bg-principal text-branco px-6 py-3">
       <div className="flex items-center gap-3">
-        <div className="h-9 w-9 rounded-full bg-destaque/90 flex items-center justify-center font-title font-900 text-principal text-sm">
-          KT
-        </div>
+        <Image
+          src="/logo-simbolo.png"
+          alt="Kruger Toledo Consultoria"
+          width={36}
+          height={36}
+          className="h-9 w-9 rounded-full"
+          priority
+        />
         <div>
           <p className="font-title font-800 text-sm leading-tight">
             Kruger Toledo Consultoria
