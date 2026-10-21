@@ -84,7 +84,7 @@ export default async function MensalPage({
         <div className="flex items-center gap-3">
           <Link
             href={`/mensal?mes=${mesAnterior}${mostrarPendentes ? "&pendentes=1" : ""}`}
-            className="h-9 w-9 rounded-full bg-principal/10 text-principal flex items-center justify-center font-bold"
+            className="h-9 w-9 rounded-full bg-principal/10 text-principal flex items-center justify-center font-bold transition-colors hover:bg-principal/20"
           >
             ‹
           </Link>
@@ -93,7 +93,7 @@ export default async function MensalPage({
           </h1>
           <Link
             href={`/mensal?mes=${mesSeguinte}${mostrarPendentes ? "&pendentes=1" : ""}`}
-            className="h-9 w-9 rounded-full bg-principal/10 text-principal flex items-center justify-center font-bold"
+            className="h-9 w-9 rounded-full bg-principal/10 text-principal flex items-center justify-center font-bold transition-colors hover:bg-principal/20"
           >
             ›
           </Link>
@@ -102,10 +102,10 @@ export default async function MensalPage({
           href={`/mensal?mes=${ano}-${String(mes + 1).padStart(2, "0")}${
             mostrarPendentes ? "" : "&pendentes=1"
           }`}
-          className={`text-xs font-semibold rounded-full px-3 py-1.5 ${
+          className={`text-xs font-semibold rounded-full px-3 py-1.5 transition-colors ${
             mostrarPendentes
               ? "bg-principal text-branco"
-              : "bg-principal/10 text-principal"
+              : "bg-principal/10 text-principal hover:bg-principal/20"
           }`}
         >
           {mostrarPendentes ? "✓ Mostrando pendentes" : "Mostrar também pendentes"}

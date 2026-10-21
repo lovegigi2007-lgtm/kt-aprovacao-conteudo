@@ -101,15 +101,13 @@ export default async function SemanalPage() {
           <h1 className="font-title font-900 text-2xl text-principal">
             Semanal
           </h1>
+          <div className="fio-marca" />
           <p className="text-sm text-texto/60">
             {dias[0].toLocaleDateString("pt-BR")} a{" "}
             {dias[6].toLocaleDateString("pt-BR")}
           </p>
         </div>
-        <Link
-          href="/novo-conteudo"
-          className="rounded-full bg-principal text-branco text-sm font-semibold px-4 py-2.5 min-h-[44px] hover:bg-principal/90 flex items-center"
-        >
+        <Link href="/novo-conteudo" className="btn-primario">
           + Novo conteúdo
         </Link>
       </div>

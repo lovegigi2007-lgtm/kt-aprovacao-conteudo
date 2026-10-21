@@ -81,7 +81,7 @@ export default async function CriativosPage({
         <div className="flex items-center gap-3">
           <Link
             href={`/criativos?mes=${mesAnterior}`}
-            className="h-9 w-9 rounded-full bg-principal/10 text-principal flex items-center justify-center font-bold"
+            className="h-9 w-9 rounded-full bg-principal/10 text-principal flex items-center justify-center font-bold transition-colors hover:bg-principal/20"
           >
             ‹
           </Link>
@@ -90,16 +90,13 @@ export default async function CriativosPage({
           </h1>
           <Link
             href={`/criativos?mes=${mesSeguinte}`}
-            className="h-9 w-9 rounded-full bg-principal/10 text-principal flex items-center justify-center font-bold"
+            className="h-9 w-9 rounded-full bg-principal/10 text-principal flex items-center justify-center font-bold transition-colors hover:bg-principal/20"
           >
             ›
           </Link>
         </div>
         {podeEditar && (
-          <Link
-            href={`/criativos/nova-leva?mes=${mesAtual}`}
-            className="rounded-full bg-principal text-branco text-sm font-semibold px-4 py-2.5 min-h-[44px] hover:bg-principal/90 flex items-center"
-          >
+          <Link href={`/criativos/nova-leva?mes=${mesAtual}`} className="btn-primario">
             + Nova leva
           </Link>
         )}

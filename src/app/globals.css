@@ -51,5 +51,37 @@ h1, h2, h3, h4, .font-title {
 }
 
 .campo-input {
-  @apply rounded-lg border border-black/10 bg-branco px-3 py-2.5 min-h-[44px] text-sm focus:outline-none focus:ring-2 focus:ring-principal/40;
+  @apply rounded-lg border border-black/10 bg-branco px-3 py-2.5 min-h-[44px] text-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-principal/40;
+}
+
+/* As duas linhas finas sob o título, elemento da identidade visual do logo */
+.fio-marca {
+  @apply flex gap-1 mt-1.5 mb-1.5;
+}
+.fio-marca::before,
+.fio-marca::after {
+  content: "";
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+}
+.fio-marca::before {
+  width: 28px;
+  background: var(--color-apoio);
+}
+.fio-marca::after {
+  width: 14px;
+  background: var(--color-destaque);
+}
+
+.btn-primario {
+  @apply rounded-full bg-principal text-branco font-semibold text-sm px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-1.5 shadow-sm transition-all hover:bg-principal/90 hover:shadow-md active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none;
+}
+
+.btn-secundario {
+  @apply rounded-full bg-principal/10 text-principal font-semibold text-sm px-4 py-2.5 min-h-[44px] inline-flex items-center justify-center gap-1.5 transition-colors hover:bg-principal/15 active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none;
+}
+
+.cartao {
+  @apply rounded-xl border border-black/5 bg-branco shadow-sm transition-shadow hover:shadow-md;
 }

@@ -1,11 +1,20 @@
 import Link from "next/link";
+import {
+  IconSemanal,
+  IconMensal,
+  IconCriativos,
+  IconFeed,
+  IconIdeias,
+  IconSino,
+  IconEngrenagem,
+} from "./icons";
 
 const abas = [
-  { href: "/", label: "Semanal" },
-  { href: "/mensal", label: "Mensal" },
-  { href: "/criativos", label: "Criativos" },
-  { href: "/feed", label: "Feed" },
-  { href: "/ideias", label: "Ideias" },
+  { href: "/", label: "Semanal", Icone: IconSemanal },
+  { href: "/mensal", label: "Mensal", Icone: IconMensal },
+  { href: "/criativos", label: "Criativos", Icone: IconCriativos },
+  { href: "/feed", label: "Feed", Icone: IconFeed },
+  { href: "/ideias", label: "Ideias", Icone: IconIdeias },
 ];
 
 export function TopNav({
@@ -35,8 +44,9 @@ export function TopNav({
           <Link
             key={aba.href}
             href={aba.href}
-            className="px-4 py-2 rounded-full text-sm font-medium text-branco/85 hover:bg-branco/10 hover:text-branco transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium text-branco/85 hover:bg-branco/10 hover:text-branco transition-colors"
           >
+            <aba.Icone className="h-4 w-4" />
             {aba.label}
           </Link>
         ))}
@@ -45,21 +55,30 @@ export function TopNav({
         {aguardandoAprovacao > 0 && (
           <Link
             href="/aprovacao"
-            className="flex items-center gap-1.5 rounded-full bg-destaque text-principal text-xs font-bold px-3 py-1.5 hover:brightness-95"
+            className="flex items-center gap-1.5 rounded-full bg-destaque text-principal text-xs font-bold px-3 py-1.5 transition-all hover:brightness-95 hover:shadow-md"
           >
-            🔔 {aguardandoAprovacao} aguardando sua aprovação
+            <IconSino className="h-3.5 w-3.5" />
+            {aguardandoAprovacao} aguardando sua aprovação
           </Link>
         )}
-        <Link href="/notificacoes" className="relative" aria-label="Notificações">
-          <span className="text-xl">🔔</span>
+        <Link
+          href="/notificacoes"
+          className="relative text-branco/85 hover:text-branco transition-colors"
+          aria-label="Notificações"
+        >
+          <IconSino className="h-5 w-5" />
           {notificacoesNaoLidas > 0 && (
             <span className="absolute -top-1 -right-1.5 h-4 min-w-4 px-1 rounded-full bg-destaque text-principal text-[10px] font-bold flex items-center justify-center">
               {notificacoesNaoLidas}
             </span>
           )}
         </Link>
-        <Link href="/configuracoes" aria-label="Configurações" className="text-xl">
-          ⚙️
+        <Link
+          href="/configuracoes"
+          aria-label="Configurações"
+          className="text-branco/85 hover:text-branco transition-colors"
+        >
+          <IconEngrenagem className="h-5 w-5" />
         </Link>
         <div className="h-8 w-8 rounded-full bg-branco/20" />
       </div>

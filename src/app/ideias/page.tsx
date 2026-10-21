@@ -36,15 +36,13 @@ export default async function IdeiasPage() {
           <h1 className="font-title font-900 text-2xl text-principal">
             Ideias
           </h1>
+          <div className="fio-marca" />
           <p className="text-sm text-texto/60">
             Banco de ideias soltas e Reels pendentes de gravação, antes de
             virarem conteúdo.
           </p>
         </div>
-        <Link
-          href="/ideias/nova"
-          className="rounded-full bg-principal text-branco text-sm font-semibold px-4 py-2.5 min-h-[44px] hover:bg-principal/90 flex items-center whitespace-nowrap"
-        >
+        <Link href="/ideias/nova" className="btn-primario whitespace-nowrap">
           + Nova ideia
         </Link>
       </div>
@@ -59,7 +57,7 @@ export default async function IdeiasPage() {
         {(ideias ?? []).map((ideia) => (
           <div
             key={ideia.id}
-            className="rounded-xl border border-black/5 bg-branco shadow-sm p-4 flex flex-col gap-2"
+            className="cartao p-4 flex flex-col gap-2"
           >
             <div className="flex items-center justify-between gap-2">
               <p className="font-title font-800 text-sm text-texto">

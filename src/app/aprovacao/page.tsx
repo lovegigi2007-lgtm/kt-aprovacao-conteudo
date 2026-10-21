@@ -46,9 +46,10 @@ export default async function AprovacaoPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-4 md:py-6">
-      <h1 className="font-title font-900 text-2xl text-principal mb-1">
+      <h1 className="font-title font-900 text-2xl text-principal">
         Aguardando sua aprovação
       </h1>
+      <div className="fio-marca" />
       <p className="text-sm text-texto/60 mb-5">
         {conteudos.length === 0
           ? "Nada pendente por aqui — tudo em dia."

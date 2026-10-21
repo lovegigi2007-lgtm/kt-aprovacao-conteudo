@@ -28,8 +28,9 @@ export async function criarIdeia(formData: FormData) {
   if (tipo === "conteudo") {
     try {
       driveFolderUrl = await criarPastaDeConteudo(project.id, formato, titulo);
-    } catch {
-      // se o Drive não estiver conectado ou der erro, segue sem travar a ideia
+    } catch (e) {
+      console.error("Erro ao criar pasta no Drive para a ideia:", e);
+      // segue sem travar a ideia mesmo se o Drive falhar
     }
   }
 

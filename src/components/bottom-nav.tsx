@@ -1,11 +1,18 @@
 import Link from "next/link";
+import {
+  IconSemanal,
+  IconMensal,
+  IconCriativos,
+  IconFeed,
+  IconIdeias,
+} from "./icons";
 
 const abas = [
-  { href: "/", label: "Semanal", icon: "📅" },
-  { href: "/mensal", label: "Mensal", icon: "🗓️" },
-  { href: "/criativos", label: "Criativos", icon: "🎯" },
-  { href: "/feed", label: "Feed", icon: "▦" },
-  { href: "/ideias", label: "Ideias", icon: "💡" },
+  { href: "/", label: "Semanal", Icone: IconSemanal },
+  { href: "/mensal", label: "Mensal", Icone: IconMensal },
+  { href: "/criativos", label: "Criativos", Icone: IconCriativos },
+  { href: "/feed", label: "Feed", Icone: IconFeed },
+  { href: "/ideias", label: "Ideias", Icone: IconIdeias },
 ];
 
 export function BottomNav({
@@ -38,9 +45,9 @@ export function BottomNav({
           <Link
             key={aba.href}
             href={aba.href}
-            className="flex flex-col items-center justify-center gap-0.5 py-2.5 flex-1 min-h-[52px] text-branco/80 hover:text-branco active:bg-branco/10"
+            className="flex flex-col items-center justify-center gap-0.5 py-2.5 flex-1 min-h-[52px] text-branco/80 hover:text-branco active:bg-branco/10 transition-colors"
           >
-            <span className="text-lg leading-none">{aba.icon}</span>
+            <aba.Icone className="h-5 w-5" />
             <span className="text-[11px] font-medium">{aba.label}</span>
           </Link>
         ))}

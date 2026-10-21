@@ -14,10 +14,10 @@ export function ContentCard({ conteudo }: { conteudo: Conteudo }) {
 
   return (
     <div
-      className={`rounded-xl border bg-branco shadow-sm overflow-hidden ${
+      className={`rounded-xl border overflow-hidden shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 ${
         reprovado
           ? "border-[var(--status-reprovado)] bg-[var(--status-reprovado-bg)]"
-          : "border-black/5"
+          : "border-black/5 bg-branco"
       }`}
     >
       {conteudo.miniaturaUrl ? (
@@ -29,10 +29,14 @@ export function ContentCard({ conteudo }: { conteudo: Conteudo }) {
         />
       ) : (
         <div
-          className="h-20 w-full"
+          className="h-20 w-full flex items-center justify-center"
           style={{ backgroundColor: conteudo.corCapa }}
           aria-hidden
-        />
+        >
+          <span className="text-branco/70 text-[10px] font-semibold uppercase tracking-wide">
+            {conteudo.formato}
+          </span>
+        </div>
       )}
       <div className="p-3 flex flex-col gap-1.5">
         <div className="flex items-center justify-between gap-2">
