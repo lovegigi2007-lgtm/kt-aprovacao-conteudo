@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  /* Identidade visual Kruger Toledo Consultoria */
+  --color-principal: #0b3d23; /* verde floresta */
+  --color-apoio: #39812c; /* verde folha */
+  --color-destaque: #97cc0e; /* verde-limão */
+  --color-fundo: #f5efe3; /* creme palha */
+  --color-texto: #1f2a24; /* grafite */
+  --color-branco: #ffffff;
+  --color-terra: #a8742a; /* ocre, só gráficos de perda */
+
+  /* Status dos conteúdos */
+  --status-rascunho: #9ca3a1;
+  --status-rascunho-bg: #eceeec;
+  --status-em-aprovacao: #b8860b;
+  --status-em-aprovacao-bg: #fdf3d8;
+  --status-reprovado: #b3261e;
+  --status-reprovado-bg: #fbe6e4;
+  --status-aprovado: #2e7d32;
+  --status-aprovado-bg: #e4f1e3;
+  --status-publicado: #0b3d23;
+  --status-publicado-bg: #dde6e0;
+
+  --background: var(--color-fundo);
+  --foreground: var(--color-texto);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-principal: var(--color-principal);
+  --color-apoio: var(--color-apoio);
+  --color-destaque: var(--color-destaque);
+  --color-fundo: var(--color-fundo);
+  --color-texto: var(--color-texto);
+  --color-terra: var(--color-terra);
+  --color-branco: var(--color-branco);
+  --font-title: var(--font-archivo);
+  --font-sans: var(--font-lato);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-lato), Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3, h4, .font-title {
+  font-family: var(--font-archivo), Arial, Helvetica, sans-serif;
+}
+
+.campo-input {
+  @apply rounded-lg border border-black/10 bg-branco px-3 py-2.5 min-h-[44px] text-sm focus:outline-none focus:ring-2 focus:ring-principal/40;
+}
