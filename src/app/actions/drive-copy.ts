@@ -1,9 +1,5 @@
 "use server";
 
-// Precisa de mais tempo que o padrão porque vídeo grande demora pra
-// transferir do R2 pro Drive.
-export const maxDuration = 60;
-
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { r2, R2_BUCKET } from "@/lib/r2";
 import { createClient } from "@/lib/supabase/server";
