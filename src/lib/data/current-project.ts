@@ -20,9 +20,7 @@ export async function getUsuarioEProjetoAtual() {
     .maybeSingle();
 
   if (!membro || !membro.projects) {
-    throw new Error(
-      "Seu usuário ainda não foi adicionado a nenhum projeto. Peça para um administrador te convidar."
-    );
+    redirect("/sem-acesso");
   }
 
   return {
