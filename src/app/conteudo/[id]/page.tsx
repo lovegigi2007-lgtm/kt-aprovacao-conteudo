@@ -14,6 +14,7 @@ import {
   aprovarConteudo,
   reprovarConteudo,
   adicionarComentario,
+  excluirComentario,
 } from "@/app/actions/approvals";
 import { marcarComoPublicado } from "@/app/actions/contents";
 import { AssetUploader } from "@/components/asset-uploader";
@@ -45,7 +46,7 @@ export default async function ConteudoPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const { papel, project } = await getUsuarioEProjetoAtual();
+  const { user: usuarioAtual, papel, project } = await getUsuarioEProjetoAtual();
   const supabase = await createClient();
 
   const { data: conteudo } = await supabase
@@ -468,9 +469,24 @@ export default async function ConteudoPage({
                     <span className="text-apoio"> · slide {c.slide}</span>
                   )}
                 </span>
-                <span className="text-[11px] text-texto/40">
-                  {new Date(c.criado_em).toLocaleString("pt-BR")}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-texto/40">
+                    {new Date(c.criado_em).toLocaleString("pt-BR")}
+                  </span>
+                  {(papel === "administrador" || c.autor_id === usuarioAtual.id) && (
+                    <form action={excluirComentario}>
+                      <input type="hidden" name="commentId" value={c.id} />
+                      <input type="hidden" name="contentId" value={conteudo.id} />
+                      <button
+                        type="submit"
+                        aria-label="Apagar comentário"
+                        className="text-[11px] text-texto/40 hover:text-[var(--status-reprovado)]"
+                      >
+                        apagar
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
               <p className="text-sm text-texto">{c.texto}</p>
             </div>

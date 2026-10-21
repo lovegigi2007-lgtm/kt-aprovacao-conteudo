@@ -211,3 +211,28 @@ export async function adicionarComentario(formData: FormData) {
 
   revalidatePath(`/conteudo/${contentId}`);
 }
+
+export async function excluirComentario(formData: FormData) {
+  const commentId = String(formData.get("commentId"));
+  const contentId = String(formData.get("contentId"));
+
+  const { user, papel } = await getUsuarioEProjetoAtual();
+  const supabase = await createClient();
+
+  const { data: comentario } = await supabase
+    .from("comments")
+    .select("autor_id")
+    .eq("id", commentId)
+    .maybeSingle();
+
+  if (!comentario) return;
+
+  const podeApagar = papel === "administrador" || comentario.autor_id === user.id;
+  if (!podeApagar) {
+    throw new Error("Você só pode apagar os seus próprios comentários.");
+  }
+
+  await supabase.from("comments").delete().eq("id", commentId);
+
+  revalidatePath(`/conteudo/${contentId}`);
+}
