@@ -47,7 +47,7 @@ export async function getDriveClienteDoProjeto(projectId: string) {
 
 // Acha uma subpasta pelo nome (sem diferenciar maiúscula/minúscula) dentro
 // de uma pasta-mãe; se não existir, cria.
-async function encontrarOuCriarPastaFilha(
+export async function encontrarOuCriarPastaFilha(
   drive: drive_v3.Drive,
   pastaMaeId: string,
   nome: string
@@ -154,4 +154,30 @@ export async function criarPastaDeLeva(
 export function extrairIdDaPastaDoLink(link: string): string | null {
   const match = link.match(/folders\/([a-zA-Z0-9_-]+)/);
   return match ? match[1] : null;
+}
+
+// Envia um arquivo (já lido do R2) pra dentro da subpasta certa (Capa ou
+// Editado final) da pasta do conteúdo no Drive.
+export async function enviarArquivoParaPastaDoConteudo(
+  projectId: string,
+  pastaConteudoUrl: string,
+  subpasta: "Capa" | "Editado final",
+  nomeArquivo: string,
+  mimeType: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stream: any
+): Promise<void> {
+  const cliente = await getDriveClienteDoProjeto(projectId);
+  if (!cliente) return;
+  const { drive } = cliente;
+
+  const pastaId = extrairIdDaPastaDoLink(pastaConteudoUrl);
+  if (!pastaId) return;
+
+  const subpastaId = await encontrarOuCriarPastaFilha(drive, pastaId, subpasta);
+
+  await drive.files.create({
+    requestBody: { name: nomeArquivo, parents: [subpastaId] },
+    media: { mimeType, body: stream },
+  });
 }

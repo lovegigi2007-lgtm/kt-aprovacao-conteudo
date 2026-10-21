@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { gerarUrlDeUpload } from "@/app/actions/storage";
+import { copiarAssetParaDrive } from "@/app/actions/drive-copy";
 
 interface AssetUploaderProps {
   projectId: string;
@@ -54,15 +55,27 @@ export function AssetUploader({
           throw new Error("Falha ao enviar o arquivo para o armazenamento.");
         }
 
+        const eCapa = ordem === 0 && tipo === "imagem";
         const { error: erroInsert } = await supabase.from("assets").insert({
           content_id: contentId,
           tipo,
           caminho_storage: caminho,
           ordem,
-          e_capa: ordem === 0 && tipo === "imagem",
+          e_capa: eCapa,
         });
 
         if (erroInsert) throw erroInsert;
+
+        // Copia pro Drive em paralelo, sem travar a tela — se falhar, só
+        // não copia, o upload principal (R2) já está garantido.
+        copiarAssetParaDrive(
+          projectId,
+          contentId,
+          caminho,
+          arquivo.type || "application/octet-stream",
+          eCapa
+        ).catch(() => {});
+
         ordem++;
       }
 

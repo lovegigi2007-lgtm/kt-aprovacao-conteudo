@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { gerarUrlDeUpload } from "@/app/actions/storage";
+import { copiarAssetParaDrive } from "@/app/actions/drive-copy";
 
 interface BatchUploaderProps {
   projectId: string;
@@ -73,18 +74,27 @@ export function BatchUploader({
           throw new Error("Falha ao enviar o arquivo para o armazenamento.");
         }
 
+        const eCapa = tipoArquivo === "imagem";
         await supabase.from("assets").insert({
           content_id: conteudo.id,
           tipo: tipoArquivo,
           caminho_storage: caminho,
           ordem: 0,
-          e_capa: tipoArquivo === "imagem",
+          e_capa: eCapa,
         });
 
         await supabase.from("activity_log").insert({
           content_id: conteudo.id,
           tipo_evento: "criado",
         });
+
+        copiarAssetParaDrive(
+          projectId,
+          conteudo.id,
+          caminho,
+          arquivo.type || "application/octet-stream",
+          eCapa
+        ).catch(() => {});
       }
 
       router.refresh();
