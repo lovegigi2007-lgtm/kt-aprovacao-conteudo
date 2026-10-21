@@ -18,6 +18,7 @@ import {
 import { marcarComoPublicado } from "@/app/actions/contents";
 import { AssetUploader } from "@/components/asset-uploader";
 import { excluirAsset } from "@/app/actions/assets";
+import { ReplaceAssetButton } from "@/components/replace-asset-button";
 import { Checklist } from "@/components/checklist";
 import { EnviarAprovacaoButton } from "@/components/enviar-aprovacao-button";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
@@ -34,6 +35,7 @@ const rotuloEvento: Record<string, string> = {
   publicado: "Marcado como publicado",
   editado: "Editado",
   editado_derrubou_aprovacao: "Editado (voltou para \"Em aprovação\")",
+  arquivo_substituido: "Arquivo substituído (versão anterior guardada)",
 };
 
 export default async function ConteudoPage({
@@ -105,6 +107,34 @@ export default async function ConteudoPage({
   const checklistCompleto =
     (itensChecklist ?? []).length > 0 &&
     (itensChecklist ?? []).every((i) => mapaRespostasChecklist.get(i.id));
+
+  const { data: versoesAnteriores } = await supabase
+    .from("assets")
+    .select("*")
+    .eq("content_id", id)
+    .eq("versao_atual", false)
+    .order("ordem", { ascending: true })
+    .order("versao", { ascending: false });
+
+  const versoesAnterioresComUrl = await Promise.all(
+    (versoesAnteriores ?? []).map(async (a) => {
+      try {
+        const extensao = a.caminho_storage.split(".").pop()?.toLowerCase() ?? "";
+        const url = await getSignedUrl(
+          r2,
+          new GetObjectCommand({
+            Bucket: R2_BUCKET,
+            Key: a.caminho_storage,
+            ResponseContentType: extensaoParaMime[extensao],
+          }),
+          { expiresIn: 60 * 60 }
+        );
+        return { ...a, url };
+      } catch {
+        return { ...a, url: null };
+      }
+    })
+  );
 
   const assetsComUrl = await Promise.all(
     (assets ?? []).map(async (a) => {
@@ -197,18 +227,28 @@ export default async function ConteudoPage({
                   capa
                 </span>
               )}
+              <span className="absolute bottom-1.5 left-1.5 bg-black/60 text-branco text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                v{a.versao} (atual)
+              </span>
               {podeEditar && (
-                <form action={excluirAsset} className="absolute top-1.5 right-1.5">
-                  <input type="hidden" name="assetId" value={a.id} />
-                  <input type="hidden" name="contentId" value={conteudo.id} />
-                  <button
-                    type="submit"
-                    aria-label="Apagar arquivo"
-                    className="h-6 w-6 rounded-full bg-black/60 text-branco text-xs flex items-center justify-center hover:bg-[var(--status-reprovado)]"
-                  >
-                    ✕
-                  </button>
-                </form>
+                <div className="absolute top-1.5 right-1.5 flex gap-1">
+                  <ReplaceAssetButton
+                    projectId={conteudo.project_id}
+                    contentId={conteudo.id}
+                    assetId={a.id}
+                  />
+                  <form action={excluirAsset}>
+                    <input type="hidden" name="assetId" value={a.id} />
+                    <input type="hidden" name="contentId" value={conteudo.id} />
+                    <button
+                      type="submit"
+                      aria-label="Apagar arquivo"
+                      className="h-6 w-6 rounded-full bg-black/60 text-branco text-xs flex items-center justify-center hover:bg-[var(--status-reprovado)]"
+                    >
+                      ✕
+                    </button>
+                  </form>
+                </div>
               )}
             </div>
           ))}
@@ -234,6 +274,40 @@ export default async function ConteudoPage({
             proximaOrdem={assetsComUrl.length}
           />
         </div>
+      )}
+
+      {versoesAnterioresComUrl.length > 0 && (
+        <details className="mb-4">
+          <summary className="cursor-pointer text-xs font-semibold text-texto/60">
+            Ver {versoesAnterioresComUrl.length} versão(ões) anterior(es)
+          </summary>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+            {versoesAnterioresComUrl.map((a) => (
+              <div
+                key={a.id}
+                className="rounded-xl overflow-hidden bg-black/5 relative opacity-80"
+              >
+                {a.tipo === "video" ? (
+                  <video src={a.url ?? undefined} controls className="w-full h-full object-cover" />
+                ) : a.tipo === "pdf" ? (
+                  <a
+                    href={a.url ?? undefined}
+                    target="_blank"
+                    className="flex items-center justify-center h-32 text-sm font-medium text-principal underline"
+                  >
+                    Abrir PDF
+                  </a>
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={a.url ?? undefined} alt="" className="w-full h-full object-cover" />
+                )}
+                <span className="absolute bottom-1.5 left-1.5 bg-black/60 text-branco text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                  v{a.versao}
+                </span>
+              </div>
+            ))}
+          </div>
+        </details>
       )}
 
       {conteudo.status === "reprovado" && ultimaReprovacao && (
