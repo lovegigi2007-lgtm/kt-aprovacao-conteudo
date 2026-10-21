@@ -50,7 +50,7 @@ export default async function NotificacoesPage() {
             href={n.link ?? "/"}
             className={`rounded-lg border p-3 text-sm ${
               n.lida
-                ? "border-black/5 bg-branco text-texto/60"
+                ? "border-black/5 bg-cartao text-texto/60"
                 : "border-apoio/30 bg-apoio/5 text-texto font-medium"
             }`}
           >

@@ -17,7 +17,7 @@ export function ContentCard({ conteudo }: { conteudo: Conteudo }) {
       className={`rounded-xl border overflow-hidden shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 ${
         reprovado
           ? "border-[var(--status-reprovado)] bg-[var(--status-reprovado-bg)]"
-          : "border-black/5 bg-branco"
+          : "border-black/5 bg-cartao"
       }`}
     >
       {conteudo.miniaturaUrl ? (

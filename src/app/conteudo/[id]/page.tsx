@@ -449,7 +449,7 @@ export default async function ConteudoPage({
             </p>
           )}
           {(comentarios ?? []).map((c) => (
-            <div key={c.id} className="rounded-lg bg-branco border border-black/5 p-3">
+            <div key={c.id} className="rounded-lg bg-cartao border border-black/5 p-3">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-semibold text-texto">
                   {nomePorUsuario.get(c.autor_id) ?? "Alguém da equipe"}

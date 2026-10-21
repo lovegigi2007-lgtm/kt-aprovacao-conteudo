@@ -8,6 +8,7 @@
   --color-fundo: #f5efe3; /* creme palha */
   --color-texto: #1f2a24; /* grafite */
   --color-branco: #ffffff;
+  --color-cartao: #fffaf1; /* branco levemente aquecido, usado nas superfícies (cards) */
   --color-terra: #a8742a; /* ocre, só gráficos de perda */
 
   /* Status dos conteúdos */
@@ -36,12 +37,20 @@
   --color-texto: var(--color-texto);
   --color-terra: var(--color-terra);
   --color-branco: var(--color-branco);
+  --color-cartao: var(--color-cartao);
   --font-title: var(--font-archivo);
   --font-sans: var(--font-lato);
 }
 
 body {
   background: var(--background);
+  background-image: radial-gradient(
+      circle at 100% 0%,
+      color-mix(in srgb, var(--color-apoio) 7%, transparent) 0%,
+      transparent 45%
+    ),
+    linear-gradient(180deg, #f8f2e6 0%, var(--color-fundo) 55%, #efe6d4 100%);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-lato), Arial, Helvetica, sans-serif;
 }
@@ -51,7 +60,7 @@ h1, h2, h3, h4, .font-title {
 }
 
 .campo-input {
-  @apply rounded-lg border border-black/10 bg-branco px-3 py-2.5 min-h-[44px] text-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-principal/40;
+  @apply rounded-lg border border-black/10 bg-cartao px-3 py-2.5 min-h-[44px] text-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-principal/40;
 }
 
 /* As duas linhas finas sob o título, elemento da identidade visual do logo */
@@ -83,5 +92,5 @@ h1, h2, h3, h4, .font-title {
 }
 
 .cartao {
-  @apply rounded-xl border border-black/5 bg-branco shadow-sm transition-shadow hover:shadow-md;
+  @apply rounded-xl border border-black/5 bg-cartao shadow-sm transition-shadow hover:shadow-md;
 }

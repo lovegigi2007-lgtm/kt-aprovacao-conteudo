@@ -33,7 +33,7 @@ export default async function ConfiguracoesPage({
         Configurações
       </h1>
 
-      <section className="rounded-xl border border-black/5 bg-branco p-4 flex flex-col gap-3">
+      <section className="rounded-xl border border-black/5 bg-cartao p-4 flex flex-col gap-3">
         <h2 className="font-title font-800 text-lg text-principal">
           Google Drive
         </h2>

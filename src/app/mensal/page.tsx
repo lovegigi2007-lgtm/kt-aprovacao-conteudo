@@ -205,7 +205,7 @@ function CalendarioDaRede({
             <div
               key={chave}
               className={`rounded-lg border border-black/5 min-h-[72px] p-1 flex flex-col gap-1 ${
-                foraDoMes ? "bg-black/[0.02] opacity-40" : "bg-branco"
+                foraDoMes ? "bg-black/[0.02] opacity-40" : "bg-cartao"
               }`}
             >
               <span className="text-[10px] font-semibold text-texto/50">

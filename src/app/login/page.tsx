@@ -30,7 +30,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-fundo px-4">
-      <div className="w-full max-w-sm bg-branco rounded-2xl shadow-sm border border-black/5 p-6">
+      <div className="w-full max-w-sm bg-cartao rounded-2xl shadow-sm border border-black/5 p-6">
         <div className="h-12 w-12 rounded-full bg-principal flex items-center justify-center font-title font-900 text-branco mb-4">
           KT
         </div>

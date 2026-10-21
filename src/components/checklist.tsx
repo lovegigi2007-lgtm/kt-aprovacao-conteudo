@@ -26,7 +26,7 @@ export function Checklist({
   if (itens.length === 0) return null;
 
   return (
-    <div className="rounded-lg border border-black/5 bg-branco p-3 flex flex-col gap-2 mb-4">
+    <div className="rounded-lg border border-black/5 bg-cartao p-3 flex flex-col gap-2 mb-4">
       <p className="text-xs font-semibold text-texto/60">
         Checklist de publicação
       </p>
