@@ -14,7 +14,8 @@ import { getMiniaturasPorConteudo } from "@/lib/data/thumbnails";
 function proximosDias(qtd: number) {
   const dias = [];
   const hoje = new Date();
-  for (let i = 1; i <= qtd; i++) {
+  // Começa em hoje (i=0), não só amanhã.
+  for (let i = 0; i < qtd; i++) {
     const d = new Date(hoje);
     d.setDate(hoje.getDate() + i);
     dias.push(d);
@@ -37,10 +38,10 @@ export default async function SemanalPage() {
   const { project } = await getUsuarioEProjetoAtual();
   const supabase = await createClient();
 
-  const dias = proximosDias(7);
+  const dias = proximosDias(8);
   const inicio = new Date(dias[0]);
   inicio.setHours(0, 0, 0, 0);
-  const fim = new Date(dias[6]);
+  const fim = new Date(dias[dias.length - 1]);
   fim.setHours(23, 59, 59, 999);
 
   const { data: linhas, error } = await supabase
@@ -92,7 +93,7 @@ export default async function SemanalPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const metasInstagram = (project.metas_frequencia as any)?.instagram ?? {};
   const metaFeed = metasInstagram.feed_por_semana ?? 0;
-  const metaStories = (metasInstagram.stories_por_dia ?? 0) * 7;
+  const metaStories = (metasInstagram.stories_por_dia ?? 0) * dias.length;
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 py-4 md:py-6">
@@ -104,7 +105,7 @@ export default async function SemanalPage() {
           <div className="fio-marca" />
           <p className="text-sm text-texto/60">
             {dias[0].toLocaleDateString("pt-BR")} a{" "}
-            {dias[6].toLocaleDateString("pt-BR")}
+            {dias[dias.length - 1].toLocaleDateString("pt-BR")}
           </p>
         </div>
         <Link href="/novo-conteudo" className="btn-primario">
@@ -121,16 +122,28 @@ export default async function SemanalPage() {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
-        {dias.map((dia) => {
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+        {dias.map((dia, indice) => {
           const chave = chaveDia(dia);
           const conteudosDoDia = porDia.get(chave) ?? [];
+          const ehHoje = indice === 0;
           return (
-            <div key={chave} className="flex flex-col gap-2 min-w-0">
+            <div
+              key={chave}
+              className={`flex flex-col gap-2 min-w-0 ${
+                ehHoje ? "rounded-xl bg-apoio/5 p-2 -m-2 ring-1 ring-apoio/20" : ""
+              }`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-title font-800 text-xs uppercase tracking-wide text-texto/70">
-                    {dia.toLocaleDateString("pt-BR", { weekday: "short" })}
+                  <p
+                    className={`font-title font-800 text-xs uppercase tracking-wide ${
+                      ehHoje ? "text-apoio" : "text-texto/70"
+                    }`}
+                  >
+                    {ehHoje
+                      ? "Hoje"
+                      : dia.toLocaleDateString("pt-BR", { weekday: "short" })}
                   </p>
                   <p className="font-title font-800 text-sm text-principal">
                     {dia.toLocaleDateString("pt-BR", {
