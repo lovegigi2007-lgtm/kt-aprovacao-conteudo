@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/bottom-nav";
 import { BackgroundDecor } from "@/components/background-decor";
 import { getFilaAprovacaoCount } from "@/lib/data/fila-aprovacao";
 import { getNotificacoesNaoLidasCount } from "@/lib/data/notifications";
+import { getPendenciasPorAba } from "@/lib/data/pendencias-nav";
 
 const archivo = Archivo({
   variable: "--font-archivo",
@@ -34,10 +35,12 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [aguardandoAprovacao, notificacoesNaoLidas] = await Promise.all([
-    getFilaAprovacaoCount(),
-    getNotificacoesNaoLidasCount(),
-  ]);
+  const [aguardandoAprovacao, notificacoesNaoLidas, pendenciasPorAba] =
+    await Promise.all([
+      getFilaAprovacaoCount(),
+      getNotificacoesNaoLidasCount(),
+      getPendenciasPorAba(),
+    ]);
 
   return (
     <html
@@ -49,11 +52,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <TopNav
           aguardandoAprovacao={aguardandoAprovacao}
           notificacoesNaoLidas={notificacoesNaoLidas}
+          pendenciasPorAba={pendenciasPorAba}
         />
         <main className="flex-1 pb-20 md:pb-0">{children}</main>
         <BottomNav
           aguardandoAprovacao={aguardandoAprovacao}
           notificacoesNaoLidas={notificacoesNaoLidas}
+          pendenciasPorAba={pendenciasPorAba}
         />
       </body>
     </html>

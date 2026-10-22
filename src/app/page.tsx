@@ -90,6 +90,16 @@ export default async function SemanalPage() {
     (c) => c.formato === "Story" && c.rede === "Instagram"
   ).length;
 
+  const emAprovacao = conteudos.filter((c) => c.status === "Em aprovação").length;
+  const aprovadosAguardando = conteudos.filter((c) => c.status === "Aprovado").length;
+  const publicadosNaSemana = conteudos.filter((c) => c.status === "Publicado").length;
+
+  const { count: ideiasNoBanco } = await supabase
+    .from("ideas")
+    .select("id", { count: "exact", head: true })
+    .eq("project_id", project.id)
+    .is("convertida_em_conteudo_id", null);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const metasInstagram = (project.metas_frequencia as any)?.instagram ?? {};
   const metaFeed = metasInstagram.feed_por_semana ?? 0;
@@ -110,6 +120,36 @@ export default async function SemanalPage() {
         </div>
         <Link href="/novo-conteudo" className="btn-primario">
           + Novo conteúdo
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+        <Link
+          href="/aprovacao"
+          className="cartao px-3 py-2.5 hover:shadow-md transition-shadow"
+        >
+          <p className="font-title font-900 text-2xl text-[var(--status-em-aprovacao)]">
+            {emAprovacao}
+          </p>
+          <p className="text-xs text-texto/60">Em aprovação</p>
+        </Link>
+        <div className="cartao px-3 py-2.5">
+          <p className="font-title font-900 text-2xl text-[var(--status-aprovado)]">
+            {aprovadosAguardando}
+          </p>
+          <p className="text-xs text-texto/60">Aprovados, aguardando publicar</p>
+        </div>
+        <div className="cartao px-3 py-2.5">
+          <p className="font-title font-900 text-2xl text-[var(--status-publicado)]">
+            {publicadosNaSemana}
+          </p>
+          <p className="text-xs text-texto/60">Publicados nesta semana</p>
+        </div>
+        <Link href="/ideias" className="cartao px-3 py-2.5 hover:shadow-md transition-shadow">
+          <p className="font-title font-900 text-2xl text-apoio">
+            {ideiasNoBanco ?? 0}
+          </p>
+          <p className="text-xs text-texto/60">Ideias no banco</p>
         </Link>
       </div>
 

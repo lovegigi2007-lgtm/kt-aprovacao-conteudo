@@ -11,19 +11,21 @@ import {
 } from "./icons";
 
 const abas = [
-  { href: "/", label: "Semanal", Icone: IconSemanal },
-  { href: "/mensal", label: "Mensal", Icone: IconMensal },
-  { href: "/criativos", label: "Criativos", Icone: IconCriativos },
-  { href: "/feed", label: "Feed", Icone: IconFeed },
-  { href: "/ideias", label: "Ideias", Icone: IconIdeias },
-];
+  { href: "/", label: "Semanal", Icone: IconSemanal, pendenciaChave: "conteudo" },
+  { href: "/mensal", label: "Mensal", Icone: IconMensal, pendenciaChave: "conteudo" },
+  { href: "/criativos", label: "Criativos", Icone: IconCriativos, pendenciaChave: "criativos" },
+  { href: "/feed", label: "Feed", Icone: IconFeed, pendenciaChave: "conteudo" },
+  { href: "/ideias", label: "Ideias", Icone: IconIdeias, pendenciaChave: null },
+] as const;
 
 export function TopNav({
   aguardandoAprovacao = 0,
   notificacoesNaoLidas = 0,
+  pendenciasPorAba = { conteudo: 0, criativos: 0 },
 }: {
   aguardandoAprovacao?: number;
   notificacoesNaoLidas?: number;
+  pendenciasPorAba?: { conteudo: number; criativos: number };
 }) {
   return (
     <header className="hidden md:flex items-center justify-between bg-principal text-branco px-6 py-3">
@@ -46,16 +48,24 @@ export function TopNav({
         </div>
       </div>
       <nav className="flex items-center gap-1">
-        {abas.map((aba) => (
-          <Link
-            key={aba.href}
-            href={aba.href}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium text-branco/85 hover:bg-branco/10 hover:text-branco transition-colors"
-          >
-            <aba.Icone className="h-4 w-4" />
-            {aba.label}
-          </Link>
-        ))}
+        {abas.map((aba) => {
+          const pendencia = aba.pendenciaChave
+            ? pendenciasPorAba[aba.pendenciaChave]
+            : 0;
+          return (
+            <Link
+              key={aba.href}
+              href={aba.href}
+              className="relative flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium text-branco/85 hover:bg-branco/10 hover:text-branco transition-colors"
+            >
+              <aba.Icone className="h-4 w-4" />
+              {aba.label}
+              {pendencia > 0 && (
+                <span className="h-1.5 w-1.5 rounded-full bg-destaque" />
+              )}
+            </Link>
+          );
+        })}
       </nav>
       <div className="flex items-center gap-3">
         {aguardandoAprovacao > 0 && (
