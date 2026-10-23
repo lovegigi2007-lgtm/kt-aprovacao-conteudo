@@ -4,15 +4,18 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { gerarUrlDeUpload } from "@/app/actions/storage";
 import { trocarAsset } from "@/app/actions/assets";
+import { copiarAssetParaDrive } from "@/app/actions/drive-copy";
 
 export function ReplaceAssetButton({
   projectId,
   contentId,
   assetId,
+  eCapa,
 }: {
   projectId: string;
   contentId: string;
   assetId: string;
+  eCapa?: boolean;
 }) {
   const [enviando, setEnviando] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,6 +38,15 @@ export function ReplaceAssetButton({
       if (!resposta.ok) throw new Error("Falha ao enviar o arquivo.");
 
       await trocarAsset(contentId, assetId, caminho, tipo);
+
+      copiarAssetParaDrive(
+        projectId,
+        contentId,
+        caminho,
+        arquivo.type || "application/octet-stream",
+        eCapa ?? false
+      ).catch(() => {});
+
       router.refresh();
     } finally {
       setEnviando(false);

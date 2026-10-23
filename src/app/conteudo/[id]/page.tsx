@@ -151,9 +151,21 @@ export default async function ConteudoPage({
           }),
           { expiresIn: 60 * 60 }
         );
-        return { ...a, url };
+        const nomeParaBaixar = `${conteudo.titulo}${
+          a.ordem ? `-${a.ordem + 1}` : ""
+        }.${extensao}`.replace(/[\\/:*?"<>|]/g, "_");
+        const urlDownload = await getSignedUrl(
+          r2,
+          new GetObjectCommand({
+            Bucket: R2_BUCKET,
+            Key: a.caminho_storage,
+            ResponseContentDisposition: `attachment; filename="${nomeParaBaixar}"`,
+          }),
+          { expiresIn: 60 * 60 }
+        );
+        return { ...a, url, urlDownload };
       } catch {
-        return { ...a, url: null };
+        return { ...a, url: null, urlDownload: null };
       }
     })
   );
@@ -242,12 +254,22 @@ export default async function ConteudoPage({
               <span className="absolute bottom-1.5 left-1.5 bg-black/60 text-branco text-[10px] font-semibold px-2 py-0.5 rounded-full">
                 v{a.versao} (atual)
               </span>
+              {a.urlDownload && (
+                <a
+                  href={a.urlDownload}
+                  download
+                  className="absolute bottom-1.5 right-1.5 bg-black/60 text-branco text-[10px] font-semibold px-2 py-0.5 rounded-full hover:bg-principal"
+                >
+                  ⬇ baixar
+                </a>
+              )}
               {podeEditar && (
                 <div className="absolute top-1.5 right-1.5 flex gap-1">
                   <ReplaceAssetButton
                     projectId={conteudo.project_id}
                     contentId={conteudo.id}
                     assetId={a.id}
+                    eCapa={a.e_capa}
                   />
                   <form action={excluirAsset}>
                     <input type="hidden" name="assetId" value={a.id} />
