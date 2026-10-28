@@ -8,6 +8,7 @@ import { r2, R2_BUCKET } from "@/lib/r2";
 import { criarPastaDeConteudo } from "@/lib/google-drive";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { dataHoraBRParaUTC } from "@/lib/data-br";
 
 export async function apagarArquivosDoConteudo(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -95,7 +96,7 @@ export async function criarConteudo(formData: FormData) {
     .insert({
       project_id: project.id,
       titulo,
-      data_hora: new Date(`${data}T${hora}:00`).toISOString(),
+      data_hora: dataHoraBRParaUTC(data, hora).toISOString(),
       rede: labelParaRede[redeLabel] ?? "instagram",
       formato,
       tipo,
@@ -163,7 +164,7 @@ export async function editarConteudo(formData: FormData) {
     throw new Error("Título e data são obrigatórios.");
   }
 
-  const novaDataHora = new Date(`${data}T${hora}:00`).toISOString();
+  const novaDataHora = dataHoraBRParaUTC(data, hora).toISOString();
   const novaRede = labelParaRede[redeLabel] ?? "instagram";
   const novoFormato = labelParaFormato[formatoLabel] ?? "estatico";
   const novoTipo = labelParaTipo[tipoLabel] ?? "conteudo";

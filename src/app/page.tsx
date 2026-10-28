@@ -10,14 +10,18 @@ import {
 } from "@/lib/labels";
 import { Conteudo } from "@/lib/types";
 import { getMiniaturasPorConteudo } from "@/lib/data/thumbnails";
+import { chaveDiaBR, hojeChaveBR } from "@/lib/data-br";
 
+// Gera os próximos dias como datas "neutras" (meio-dia UTC), ancoradas no
+// dia de hoje em Brasília — não no fuso do servidor (a Vercel roda em UTC,
+// e perto da meia-noite isso fazia "hoje" virar amanhã).
 function proximosDias(qtd: number) {
+  const [ano, mes, dia] = hojeChaveBR().split("-").map(Number);
+  const base = new Date(Date.UTC(ano, mes - 1, dia, 12));
   const dias = [];
-  const hoje = new Date();
-  // Começa em hoje (i=0), não só amanhã.
   for (let i = 0; i < qtd; i++) {
-    const d = new Date(hoje);
-    d.setDate(hoje.getDate() + i);
+    const d = new Date(base);
+    d.setUTCDate(base.getUTCDate() + i);
     dias.push(d);
   }
   return dias;
@@ -79,7 +83,7 @@ export default async function SemanalPage() {
 
   const porDia = new Map(dias.map((d) => [chaveDia(d), [] as Conteudo[]]));
   for (const c of conteudos) {
-    const chave = c.dataHora.slice(0, 10);
+    const chave = chaveDiaBR(c.dataHora);
     porDia.get(chave)?.push(c);
   }
 

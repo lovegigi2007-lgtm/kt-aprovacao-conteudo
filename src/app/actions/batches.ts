@@ -6,6 +6,7 @@ import { criarPastaDeLeva } from "@/lib/google-drive";
 import { apagarArquivosDoConteudo } from "@/app/actions/contents";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { hojeChaveBR } from "@/lib/data-br";
 
 export async function excluirLeva(formData: FormData) {
   const batchId = String(formData.get("batchId"));
@@ -139,7 +140,7 @@ export async function atualizarDataAprovacaoDaLeva(
   if (todosProntos) {
     await supabase
       .from("batches")
-      .update({ data_aprovacao: new Date().toISOString().slice(0, 10) })
+      .update({ data_aprovacao: hojeChaveBR() })
       .eq("id", batchId)
       .is("data_aprovacao", null);
   }

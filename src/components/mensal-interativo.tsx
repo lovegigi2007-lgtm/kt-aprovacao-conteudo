@@ -5,6 +5,7 @@ import Link from "next/link";
 import { redeParaLabel, formatoParaLabel, statusParaLabel } from "@/lib/labels";
 import { StatusBadge } from "./status-badge";
 import { Status } from "@/lib/types";
+import { chaveDiaBR, hojeChaveBR } from "@/lib/data-br";
 
 const diasSemana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
@@ -17,10 +18,14 @@ interface ConteudoLinha {
   status: string;
 }
 
-function chaveDia(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate()
-  ).padStart(2, "0")}`;
+// As células do calendário vêm do servidor ancoradas ao meio-dia UTC (ver
+// gerarGradeDoMes em mensal/page.tsx) — por isso lemos sempre com os
+// métodos UTC aqui, pra não escorregar um dia no fuso de quem está vendo.
+function chaveDiaCelula(d: Date) {
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(d.getUTCDate()).padStart(2, "0")}`;
 }
 
 export function MensalInterativo({
@@ -39,10 +44,10 @@ export function MensalInterativo({
   miniaturaPorConteudo: Record<string, string>;
 }) {
   const [diaSelecionado, setDiaSelecionado] = useState<string | null>(null);
-  const hojeChave = chaveDia(new Date());
+  const hojeChave = hojeChaveBR();
 
   const itensDoDiaSelecionado = diaSelecionado
-    ? linhas.filter((l) => l.data_hora.slice(0, 10) === diaSelecionado)
+    ? linhas.filter((l) => chaveDiaBR(l.data_hora) === diaSelecionado)
     : [];
 
   const painelAberto = diaSelecionado !== null;
@@ -200,7 +205,7 @@ function CalendarioDaRede({
 }) {
   const porDia = new Map<string, ConteudoLinha[]>();
   for (const c of conteudos) {
-    const chave = c.data_hora.slice(0, 10);
+    const chave = chaveDiaBR(c.data_hora);
     if (!porDia.has(chave)) porDia.set(chave, []);
     porDia.get(chave)!.push(c);
   }
@@ -246,9 +251,9 @@ function CalendarioDaRede({
       </div>
       <div className="grid grid-cols-7 gap-1">
         {celulas.map((dia) => {
-          const chave = chaveDia(dia);
+          const chave = chaveDiaCelula(dia);
           const itens = porDia.get(chave) ?? [];
-          const foraDoMes = dia.getMonth() !== mes;
+          const foraDoMes = dia.getUTCMonth() !== mes;
           const ehHoje = chave === hojeChave;
           const selecionado = chave === diaSelecionado;
           return (
@@ -271,7 +276,7 @@ function CalendarioDaRede({
                   ehHoje ? "text-apoio" : "text-texto/50"
                 }`}
               >
-                {ehHoje ? "Hoje" : dia.getDate()}
+                {ehHoje ? "Hoje" : dia.getUTCDate()}
               </span>
               <div className="flex flex-col gap-0.5">
                 {itens.slice(0, 2).map((item) => {

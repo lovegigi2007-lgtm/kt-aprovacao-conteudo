@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { editarConteudo } from "@/app/actions/contents";
 import { redeParaLabel, formatoParaLabel, tipoParaLabel } from "@/lib/labels";
+import { chaveDiaBR, horaBR } from "@/lib/data-br";
 
 export default async function EditarConteudoPage({
   params,
@@ -20,9 +21,8 @@ export default async function EditarConteudoPage({
 
   if (!conteudo) notFound();
 
-  const dataHora = new Date(conteudo.data_hora);
-  const dataValor = dataHora.toISOString().slice(0, 10);
-  const horaValor = dataHora.toISOString().slice(11, 16);
+  const dataValor = chaveDiaBR(conteudo.data_hora);
+  const horaValor = horaBR(conteudo.data_hora);
 
   return (
     <div className="max-w-xl mx-auto px-4 py-6">

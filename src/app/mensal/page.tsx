@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getUsuarioEProjetoAtual } from "@/lib/data/current-project";
 import { getMiniaturasPorConteudo } from "@/lib/data/thumbnails";
 import { MensalInterativo } from "@/components/mensal-interativo";
+import { hojeChaveBR } from "@/lib/data-br";
 
 const nomesMes = [
   "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -10,16 +11,20 @@ const nomesMes = [
 ];
 const ordemRedes = ["instagram", "linkedin", "tiktok"] as const;
 
+// Ancora cada célula ao meio-dia UTC: assim a data não "escorrega" pro dia
+// anterior/seguinte quando o navegador de quem está vendo lê o objeto Date
+// no fuso dele (o servidor roda em UTC, o navegador pode estar em
+// qualquer fuso) — ver src/lib/data-br.ts pra mais contexto.
 function gerarGradeDoMes(ano: number, mes: number) {
-  const primeiroDia = new Date(ano, mes, 1);
-  // getDay(): 0=domingo..6=sábado. Queremos semana começando segunda.
-  const offset = (primeiroDia.getDay() + 6) % 7;
-  const inicioGrade = new Date(ano, mes, 1 - offset);
+  const primeiroDia = new Date(Date.UTC(ano, mes, 1, 12));
+  // getUTCDay(): 0=domingo..6=sábado. Queremos semana começando segunda.
+  const offset = (primeiroDia.getUTCDay() + 6) % 7;
+  const inicioGrade = new Date(Date.UTC(ano, mes, 1 - offset, 12));
 
   const celulas: Date[] = [];
   for (let i = 0; i < 42; i++) {
     const d = new Date(inicioGrade);
-    d.setDate(inicioGrade.getDate() + i);
+    d.setUTCDate(inicioGrade.getUTCDate() + i);
     celulas.push(d);
   }
   return celulas;
@@ -34,10 +39,10 @@ export default async function MensalPage({
   const { project } = await getUsuarioEProjetoAtual();
   const supabase = await createClient();
 
-  const hoje = new Date();
+  const [anoHoje, mesHoje] = hojeChaveBR().split("-").map(Number);
   const [anoParam, mesParam] = (params.mes ?? "").split("-").map(Number);
-  const ano = anoParam || hoje.getFullYear();
-  const mes = mesParam ? mesParam - 1 : hoje.getMonth();
+  const ano = anoParam || anoHoje;
+  const mes = mesParam ? mesParam - 1 : mesHoje - 1;
   const mostrarPendentes = params.pendentes === "1";
 
   const inicioMes = new Date(ano, mes, 1, 0, 0, 0);
